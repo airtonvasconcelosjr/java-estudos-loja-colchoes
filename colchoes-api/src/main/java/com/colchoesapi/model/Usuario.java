@@ -12,11 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Table(name = "usuarios")
 public class Usuario {
 
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	private String nome;
 	private String email;
 	private String password;
 
@@ -24,10 +23,19 @@ public class Usuario {
 	}
 
 
-	public Usuario(String email, String password) {
+	public Usuario(String nome, String email, String password) {
+		this.nome = nome;
 		this.email = email;
 		this.password = password;
 	}
+	
+	public String getINome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
 	public Long getId() {
         return id;
