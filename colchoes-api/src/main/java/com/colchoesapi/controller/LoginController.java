@@ -1,35 +1,29 @@
 package com.colchoesapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.colchoesapi.model.Usuario;
-import com.colchoesapi.service.UsuarioService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.colchoesapi.service.LoginService;
 
 @RestController
 public class LoginController {
 
     @Autowired
-    private UsuarioService usuarioService;
-
-    private static final String SECRET_KEY = "";
+    private LoginService loginService;
 
     @PostMapping("/login")
-    public String login(@RequestBody Usuario usuario) {
-        Usuario usuarioAutenticado = usuarioService.findByEmailAndPassword(usuario.getEmail(), usuario.getPassword());
+    public ResponseEntity<String> login(@RequestBody Usuario usuario) {
+        String token = loginService.autenticar(usuario.getEmail(), usuario.getPassword());
         
-        if (usuarioAutenticado != null) {
-            String token = Jwts.builder()
-                .setSubject(usuarioAutenticado.getEmail())
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-                .compact();
-            return token;
+        if (token != null) {
+            return ResponseEntity.ok(token);
         } else {
-            return "Credenciais inválidas";
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas");
         }
     }
 }
